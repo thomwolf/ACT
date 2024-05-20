@@ -41,9 +41,9 @@ def capture_image(cam):
 
 if __name__ == "__main__":
     # init camera
-    cam = cv2.VideoCapture(cfg['camera_port'])
+    cams = [cv2.VideoCapture(p) for p in cfg['camera_port']]
     # Check if the camera opened successfully
-    if not cam.isOpened():
+    if not all(c.isOpened() for c in cams):
         raise IOError("Cannot open camera")
     # init follower
     follower = Robot(device_name=ROBOT_PORTS['follower'])
@@ -72,12 +72,12 @@ if __name__ == "__main__":
     # bring the follower to the leader
     for i in range(90):
         follower.read_position()
-        _ = capture_image(cam)
+        _ = [capture_image(c) for c in cams]
     
     obs = {
         'qpos': pwm2pos(follower.read_position()),
         'qvel': vel2pwm(follower.read_velocity()),
-        'images': {cn: capture_image(cam) for cn in cfg['camera_names']}
+        'images': {cn: capture_image(cam) for cn, cam in zip(cfg['camera_names'], cams)}
     }
     os.system('spd-say "start"')
 
@@ -124,7 +124,7 @@ if __name__ == "__main__":
                 obs = {
                     'qpos': pwm2pos(follower.read_position()),
                     'qvel': vel2pwm(follower.read_velocity()),
-                    'images': {cn: capture_image(cam) for cn in cfg['camera_names']}
+                    'images': {cn: capture_image(cam) for cn, cam in zip(cfg['camera_names'], cams)}
                 }
                 ### store data
                 obs_replay.append(obs)
