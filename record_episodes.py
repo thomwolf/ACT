@@ -12,8 +12,8 @@ from robot import Robot
 
 # parse the task name via command line
 parser = argparse.ArgumentParser()
-parser.add_argument('--task', type=str, default='task1')
-parser.add_argument('--num_episodes', type=int, default=1)
+parser.add_argument('--task', type=str, default='sort4')
+parser.add_argument('--num_episodes', type=int, default=10)
 args = parser.parse_args()
 task = args.task
 num_episodes = args.num_episodes

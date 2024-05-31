@@ -25,7 +25,7 @@ ROBOT_PORTS = {
 # task config (you can add new tasks)
 TASK_CONFIG = {
     'dataset_dir': DATA_DIR,
-    'episode_len': 400,
+    'episode_len': 200,
     'state_dim': 6,
     'action_dim': 6,
     'cam_width': 640,
@@ -48,7 +48,7 @@ POLICY_CONFIG = {
     'enc_layers': 4,
     'dec_layers': 7,
     'nheads': 8,
-    'camera_names': ['front'],
+    'camera_names': ['front', 'top'],
     'policy_class': 'ACT',
     'temporal_agg': False
 }
@@ -56,7 +56,7 @@ POLICY_CONFIG = {
 # training config
 TRAIN_CONFIG = {
     'seed': 42,
-    'num_epochs': 2000,
+    'num_epochs': 1000,
     'batch_size_val': 8,
     'batch_size_train': 8,
     'eval_ckpt_name': 'policy_last.ckpt',
