@@ -24,9 +24,10 @@ train_cfg = TRAIN_CONFIG
 device = os.environ['DEVICE']
 
 
-def capture_image(cam):
+def capture_image(cam, cn):
     # Capture a single frame
     _, frame = cam.read()
+ 
     # Generate a unique filename with the current date and time
     image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
     # Define your crop coordinates (top left corner and bottom right corner)
@@ -36,6 +37,13 @@ def capture_image(cam):
     # image = image[y1:y2, x1:x2]
     # Resize the image
     image = cv2.resize(image, (cfg['cam_width'], cfg['cam_height']), interpolation=cv2.INTER_AREA)
+
+    # if cn == 'front':
+    #     image = cv2.imread('/home/thomwolf/Documents/Github/ACT/first_image_cam_low.png')
+    # elif cn == 'top':
+    #     image = cv2.imread('/home/thomwolf/Documents/Github/ACT/first_image_cam_high.png')
+    # else:
+    #     raise ValueError(f"Unknown camera name: {cn}")
 
     return image
 
@@ -72,12 +80,12 @@ if __name__ == "__main__":
     # bring the follower to the leader
     for i in range(90):
         follower.read_position()
-        _ = [capture_image(c) for c in cams]
+        _ = [capture_image(cam, cn) for cn, cam in zip(cfg['camera_names'], cams)]
     
     obs = {
         'qpos': pwm2pos(follower.read_position()),
         'qvel': vel2pwm(follower.read_velocity()),
-        'images': {cn: capture_image(cam) for cn, cam in zip(cfg['camera_names'], cams)}
+        'images': {cn: capture_image(cam, cn) for cn, cam in zip(cfg['camera_names'], cams)}
     }
     os.system('spd-say "start"')
 
@@ -99,6 +107,7 @@ if __name__ == "__main__":
                 curr_image = get_image(obs['images'], cfg['camera_names'], device)
 
                 if t % query_frequency == 0:
+                    os.system(f'spd-say "policy"')
                     all_actions = policy(qpos, curr_image)
                 if policy_config['temporal_agg']:
                     all_time_actions[[t], t:t+num_queries] = all_actions
@@ -124,7 +133,7 @@ if __name__ == "__main__":
                 obs = {
                     'qpos': pwm2pos(follower.read_position()),
                     'qvel': vel2pwm(follower.read_velocity()),
-                    'images': {cn: capture_image(cam) for cn, cam in zip(cfg['camera_names'], cams)}
+                    'images': {cn: capture_image(cam, cn) for cn, cam in zip(cfg['camera_names'], cams)}
                 }
                 ### store data
                 obs_replay.append(obs)
