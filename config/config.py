@@ -46,7 +46,7 @@ POLICY_CONFIG = {
     'lr_backbone': 1e-5,
     'backbone': 'resnet18',
     'enc_layers': 4,
-    'dec_layers': 7,
+    'dec_layers': 1,
     'nheads': 8,
     'camera_names': ['front', 'top'],
     'policy_class': 'ACT',
@@ -56,7 +56,7 @@ POLICY_CONFIG = {
 # training config
 TRAIN_CONFIG = {
     'seed': 42,
-    'num_epochs': 1000,
+    'num_epochs': 200,
     'batch_size_val': 8,
     'batch_size_train': 8,
     'eval_ckpt_name': 'policy_last.ckpt',

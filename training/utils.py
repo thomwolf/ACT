@@ -95,7 +95,6 @@ class EpisodicDataset(torch.utils.data.Dataset):
         image_data = image_data / 255.0
         action_data = (action_data - self.norm_stats["action_mean"]) / self.norm_stats["action_std"]
         qpos_data = (qpos_data - self.norm_stats["qpos_mean"]) / self.norm_stats["qpos_std"]
-
         return image_data, qpos_data, action_data, is_pad
 
 
@@ -218,6 +217,8 @@ def detach_dict(d):
 def set_seed(seed):
     torch.manual_seed(seed)
     np.random.seed(seed)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed_all(seed)
 
 
 def pos2pwm(pos:np.ndarray) -> np.ndarray:
